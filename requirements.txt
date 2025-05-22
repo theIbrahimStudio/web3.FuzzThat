@@ -1,0 +1,5 @@
+typer[all]
+web3
+hypothesis
+pytest
+py-solc-x
