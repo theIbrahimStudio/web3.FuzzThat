@@ -64,7 +64,7 @@ FuzzThat/
 - [x] Input generation (basic types)
 - [x] State delta tracker
 - [x] Unit test suite
-- [ ] Support for arrays/tuples
+- [x] Support for arrays/tuples
 - [ ] JSON config support
 - [ ] ERC20/ERC721 fuzz presets
 - [ ] CI/CD + publishing to PyPI

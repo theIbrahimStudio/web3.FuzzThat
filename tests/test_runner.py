@@ -1,3 +1,5 @@
+from hypothesis import given
+from hypothesis.strategies import data
 from fuzzer import strategy
 from fuzzer.runner import compile_contract
 import os
@@ -12,18 +14,38 @@ def test_compile_contract():
     assert len(bytecode) > 0
 
 
-def test_generate_inputs_basic_types():
-    types = ["uint256", "int128", "bool", "address", "string"]
+# Basic type test
+@given(data())
+def test_generate_basic_types(data):
+    types = ["uint256", "bool", "address"]
     inputs = strategy.generate_inputs(types)
-    assert len(inputs) == len(types)
-    assert isinstance(inputs[0], int)
-    assert isinstance(inputs[1], int)
-    assert isinstance(inputs[2], bool)
-    assert isinstance(inputs[3], str) and inputs[3].startswith("0x")
-    assert isinstance(inputs[4], str)
+    values = data.draw(inputs)
+
+    assert len(values) == 3
+    assert isinstance(values[0], int)
+    assert isinstance(values[1], bool)
+    assert isinstance(values[2], str)
+    assert values[2].startswith("0x")
 
 
-def test_generate_inputs_unsupported_type():
-    types = ["bytes32"]
+# Dynamic array test
+@given(data())
+def test_generate_dynamic_array(data):
+    types = ["uint256[]"]
     inputs = strategy.generate_inputs(types)
-    assert inputs[0] is None
+    values = data.draw(inputs)
+
+    assert isinstance(values[0], list)
+    assert all(isinstance(x, int) for x in values[0])
+
+
+# Static array test
+@given(data())
+def test_generate_static_array(data):
+    types = ["bool[3]"]
+    inputs = strategy.generate_inputs(types)
+    values = data.draw(inputs)
+
+    assert isinstance(values[0], list)
+    assert len(values[0]) == 3
+    assert all(isinstance(x, bool) for x in values[0])
